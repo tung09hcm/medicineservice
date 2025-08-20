@@ -20,5 +20,6 @@ public class UserCreationRequest {
     String firstname;
     @Size(min = 4, message = "PASSWORD_INVALID")
     String password;
+    String avatarLink;
     LocalDate dob;
 }
