@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class UserCreationResponse {
+public class UserResponse {
     String id;
     String username;
     String firstname;

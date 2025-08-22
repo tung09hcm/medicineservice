@@ -27,4 +27,5 @@ public class User {
     String password;
     String avatarLink;
     LocalDate dob;
+    Boolean deleted;
 }
