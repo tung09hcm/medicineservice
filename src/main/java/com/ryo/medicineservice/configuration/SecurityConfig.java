@@ -21,7 +21,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtGra
 @EnableWebSecurity
 public class SecurityConfig {
     private final String[] PUBLIC_ENDPOINTS_POST = {
-        "/users/createUser"
+        "/users/createUser", "/auth/login", "/auth/introspect"
     };
     private final String[] PUBLIC_ENDPOINTS_GET = {
             "/users"
@@ -29,12 +29,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS_POST).permitAll()
                         .requestMatchers(HttpMethod.GET, PUBLIC_ENDPOINTS_GET).permitAll()
                         .anyRequest().authenticated()
                 );
+        httpSecurity
+                .csrf(AbstractHttpConfigurer::disable);
         return httpSecurity.build();
     }
 

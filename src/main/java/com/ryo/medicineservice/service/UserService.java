@@ -43,7 +43,7 @@ public class UserService {
     }
 
     public UserResponse deleteUser(String id){
-        User user = userRepository.findById(id);
+        var user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         UserResponse userResponse = userMapper.userToResponse(user);
         user.setDeleted(true);
         userRepository.save(user);
@@ -51,7 +51,7 @@ public class UserService {
     }
 
     public UserResponse getUserById(String id){
-        User user = userRepository.findById(id);
+        var user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         if(user.getDeleted()){
             throw new AppException(ErrorCode.USER_NOT_EXISTED);
         }
