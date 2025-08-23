@@ -9,12 +9,12 @@ import com.ryo.medicineservice.dto.request.AuthenticationRequest;
 import com.ryo.medicineservice.dto.request.IntrospectRequest;
 import com.ryo.medicineservice.dto.response.AuthenticationResponse;
 import com.ryo.medicineservice.dto.response.IntrospectResponse;
-import com.ryo.medicineservice.entity.User;
 import com.ryo.medicineservice.exception.AppException;
 import com.ryo.medicineservice.exception.ErrorCode;
 import com.ryo.medicineservice.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,6 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -36,7 +35,8 @@ public class AuthenticationService {
     PasswordEncoder passwordEncoder;
 
     @NonFinal
-    protected static final String SIGNER_KEY = "2L2cYlpVDJQhAwStAuI1XxXOeHW+TVc0JVOnkF/EjIvK1hji8zZNarbHAOXfIAZ3\n";
+    @Value("${jwt.signerKey}")
+    private String SIGNER_KEY;
 
     public AuthenticationResponse authenticate(AuthenticationRequest request){
         var user = (userRepository.findByUsername(request.getUsername())
