@@ -1,5 +1,6 @@
 package com.ryo.medicineservice.configuration;
 
+import com.ryo.medicineservice.enums.Role;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,11 +42,15 @@ public class SecurityConfig {
         httpSecurity
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS_POST).permitAll()
-                        .requestMatchers(HttpMethod.GET, PUBLIC_ENDPOINTS_GET).permitAll()
+//                        .requestMatchers(HttpMethod.GET, PUBLIC_ENDPOINTS_GET).hasRole(Role.ADMIN.name())
+//                        .hasAuthority("ROLE_ADMIN")
+//                        .permitAll()
                         .anyRequest().authenticated()
                 );
         httpSecurity.oauth2ResourceServer((oauth2 ->
-                oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder()))
+                oauth2.jwt(jwtConfigurer ->
+                        jwtConfigurer.decoder(jwtDecoder())
+                                .jwtAuthenticationConverter(jwtAuthenticationConverter()))
         ));
 
         httpSecurity

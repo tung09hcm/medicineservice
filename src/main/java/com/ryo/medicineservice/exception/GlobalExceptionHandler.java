@@ -3,8 +3,11 @@ package com.ryo.medicineservice.exception;
 import com.ryo.medicineservice.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -30,10 +33,37 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<?>> handleJsonParseError(HttpMessageNotReadableException ex) {
         return ResponseEntity.badRequest().body(
                 ApiResponse.builder()
-                        .code(1000)
+                        .code(1009)
                         .message("Invalid request body: " + ex.getMostSpecificCause().getMessage())
                         .build()
         );
     }
+    @ExceptionHandler(value = MethodArgumentNotValidException.class)
+    ResponseEntity<ApiResponse<?>> handlingValidation(MethodArgumentNotValidException exception){
+        String enumKey = exception.getFieldError().getDefaultMessage();
 
+        ErrorCode errorCode = ErrorCode.INVALID_KEY;
+
+        try {
+            errorCode = ErrorCode.valueOf(enumKey);
+        } catch (IllegalArgumentException e){
+
+        }
+
+        ApiResponse<?> apiResponse = new ApiResponse<>();
+
+        apiResponse.setCode(errorCode.getCode());
+        apiResponse.setMessage(errorCode.getMessage());
+
+        return ResponseEntity.badRequest().body(apiResponse);
+    }
+    @ExceptionHandler(value = HttpRequestMethodNotSupportedException.class)
+    ResponseEntity<ApiResponse<?>> handlingHttpMethodException(HttpRequestMethodNotSupportedException exception){
+        return ResponseEntity.badRequest().body(
+                ApiResponse.builder()
+                        .code(1010)
+                        .message("Invalid request body: " + exception.getMessage())
+                        .build()
+        );
+    }
 }

@@ -3,6 +3,7 @@ package com.ryo.medicineservice.service;
 import com.ryo.medicineservice.dto.request.UserCreationRequest;
 import com.ryo.medicineservice.dto.response.UserResponse;
 import com.ryo.medicineservice.entity.User;
+import com.ryo.medicineservice.enums.Role;
 import com.ryo.medicineservice.exception.AppException;
 import com.ryo.medicineservice.exception.ErrorCode;
 import com.ryo.medicineservice.mapper.UserMapper;
@@ -11,9 +12,13 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -29,6 +34,11 @@ public class UserService {
         User user = userMapper.requestToUser(request);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setDeleted(false);
+
+        HashSet<String> roles = new HashSet<>();
+        roles.add(Role.USER.name());
+        user.setRoles(roles);
+
         try{
             user = userRepository.save(user);
         }
@@ -38,6 +48,7 @@ public class UserService {
         return userMapper.userToResponse(user);
     }
 
+    @PreAuthorize("hasRole(`ADMIN`)")
     public List<UserResponse> getAllUser(){
         return userRepository.findAllByDeletedFalse().stream().map(userMapper::userToResponse).toList();
     }
@@ -56,5 +67,18 @@ public class UserService {
             throw new AppException(ErrorCode.USER_NOT_EXISTED);
         }
         return userMapper.userToResponse(user);
+    }
+
+    @PostAuthorize("returnObject.username == authentication.name")
+    public UserResponse getMyInfo(){
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+
+        var user = userRepository.findByUsername(name).orElseThrow(
+                () -> new AppException(ErrorCode.USER_NOT_EXISTED)
+        );
+
+        return userMapper.userToResponse(user);
+
     }
 }
