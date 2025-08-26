@@ -3,7 +3,7 @@ package com.ryo.medicineservice.service;
 import com.ryo.medicineservice.dto.request.UserCreationRequest;
 import com.ryo.medicineservice.dto.response.UserResponse;
 import com.ryo.medicineservice.entity.User;
-import com.ryo.medicineservice.enums.Role;
+import com.ryo.medicineservice.entity.Role;
 import com.ryo.medicineservice.exception.AppException;
 import com.ryo.medicineservice.exception.ErrorCode;
 import com.ryo.medicineservice.mapper.UserMapper;
@@ -35,8 +35,10 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setDeleted(false);
 
-        HashSet<String> roles = new HashSet<>();
-        roles.add(Role.USER.name());
+        HashSet<Role> roles = new HashSet<>();
+        roles.add(Role.builder()
+                .name(com.ryo.medicineservice.enums.Role.ADMIN.name())
+                .build());
         user.setRoles(roles);
 
         try{
@@ -48,7 +50,7 @@ public class UserService {
         return userMapper.userToResponse(user);
     }
 
-    @PreAuthorize("hasRole(`ADMIN`)")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<UserResponse> getAllUser(){
         return userRepository.findAllByDeletedFalse().stream().map(userMapper::userToResponse).toList();
     }

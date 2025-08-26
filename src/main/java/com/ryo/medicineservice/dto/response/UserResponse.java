@@ -1,11 +1,13 @@
 package com.ryo.medicineservice.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.ryo.medicineservice.entity.Role;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 import java.util.Set;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -21,5 +23,5 @@ public class UserResponse {
     String avatarLink;
     String email;
     LocalDate dob;
-    Set<String> roles;
+    Set<Role> roles;
 }

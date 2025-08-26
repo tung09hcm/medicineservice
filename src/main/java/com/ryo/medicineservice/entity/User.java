@@ -6,6 +6,7 @@ import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -30,5 +31,12 @@ public class User {
     String email;
     LocalDate dob;
     Boolean deleted;
-    Set<String> roles;
+
+    @ManyToMany
+    @JoinTable(
+            name = "app_user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "roles_name")
+    )
+    Set<Role> roles;
 }

@@ -1,6 +1,7 @@
 package com.ryo.medicineservice.exception;
 
 import com.ryo.medicineservice.dto.response.ApiResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 
-
+@Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(value = Exception.class)
@@ -17,7 +18,7 @@ public class GlobalExceptionHandler {
         ApiResponse<Void> apiResponse = new ApiResponse<>();
         apiResponse.setCode(ErrorCode.UNCATEGORIZED_ERROR.getCode());
         apiResponse.setMessage(ErrorCode.UNCATEGORIZED_ERROR.getMessage());
-
+        log.error("Unexpected error", exception);
         return ResponseEntity.badRequest().body(apiResponse);
     }
 
