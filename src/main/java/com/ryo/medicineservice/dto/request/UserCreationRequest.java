@@ -23,6 +23,6 @@ public class UserCreationRequest {
     String password;
     String avatarLink;
     String email;
-    @DobConstraint(min = 2)
+    @DobConstraint(min = 2, message = "INVALID_DOB")
     LocalDate dob;
 }
