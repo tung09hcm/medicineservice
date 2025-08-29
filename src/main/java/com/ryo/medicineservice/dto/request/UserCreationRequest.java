@@ -1,5 +1,6 @@
 package com.ryo.medicineservice.dto.request;
 
+import com.ryo.medicineservice.validator.DobConstraint;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -22,5 +23,6 @@ public class UserCreationRequest {
     String password;
     String avatarLink;
     String email;
+    @DobConstraint(min = 2)
     LocalDate dob;
 }
